@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as crypto from 'crypto';
+import { config } from 'dotenv';
+config()
 
 @Injectable()
 export class ProxyService {
@@ -24,7 +26,7 @@ export class ProxyService {
         }).then((res) => res.data);
     }
 
-    async forwardToMachine(path: string, method: string, body: any, userId: string) {
+    async forwardToMachine(path: string, method: string, body: any, userId: string, idempotencyKey?: string) {
         return axios({
             url: `${this.machineUrl}${path}`,
             method,
@@ -32,6 +34,7 @@ export class ProxyService {
             headers: {
                 'X-User-Id': userId,
                 'X-Signature': this.signBody(body),
+                'Iidempotency-Key': idempotencyKey
             },
         }).then((res) => res.data);
     }

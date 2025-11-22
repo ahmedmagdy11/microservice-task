@@ -7,12 +7,12 @@ import { AuthModule } from './modules/auth/auth.module';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
-      port: Number(process.env.DB_PORT) || 5432,
+      port: Number(process.env.DB_PORT) || 5434,
       username: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASS || 'postgres',
       database: process.env.DB_NAME || 'auth_db',
       autoLoadEntities: true,
-      synchronize: true, // only for assessment; disable in real apps
+      synchronize: true,
     }),
     AuthModule,
   ],
