@@ -6,13 +6,23 @@ import { CreateVmDto } from '../dtos/create-vm.dto';
 export class CreateVmUseCase {
     constructor(private readonly vms: VmRepository) { }
 
-    async execute(dto: CreateVmDto, userId: string) {
+    async execute(dto: CreateVmDto, userId: string, idempotencyKey?: string) {
+
+        if (idempotencyKey) {
+            const existing = await this.vms.findByIdempotencyKey(idempotencyKey);
+            if (existing) {
+                return existing; // return same VM 
+            }
+        }
+
         const vm = await this.vms.create({
             ...dto,
             userId,
-            status: 'creating'
+            status: 'creating',
+            idempotencyKey: idempotencyKey || null,
         });
 
         return vm;
     }
+
 }

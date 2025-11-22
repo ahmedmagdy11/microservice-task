@@ -4,7 +4,9 @@ import { CreateVmUseCase } from './use-cases/create-vm.usecase';
 import { ListVmsUseCase } from './use-cases/list-vms.usecase';
 import { MachinesService } from './machines.service';
 import * as crypto from 'crypto';
+import { config } from 'dotenv';
 
+config()
 @Controller('machines')
 export class MachinesController {
     constructor(
@@ -27,12 +29,22 @@ export class MachinesController {
         @Body() body: CreateVmDto,
         @Headers('x-user-id') userId: string,
         @Headers('x-signature') signature: string,
+        @Headers('iidempotency-key') idempotencyKey: string,
     ) {
+        if (!userId) {
+            throw new BadRequestException('Missing X-User-Id header');
+        }
+
+        if (!signature) {
+            throw new BadRequestException('Missing X-Signature header');
+        }
+
+
         if (!this.verifySignature(body, signature)) {
             throw new BadRequestException('Invalid signature');
         }
 
-        const vm = await this.createVm.execute(body, userId);
+        const vm = await this.createVm.execute(body, userId, idempotencyKey);
 
         this.worker.mockCreateVM(vm.id);
 

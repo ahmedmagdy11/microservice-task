@@ -41,4 +41,10 @@ export class VmRepository {
     findById(id: string) {
         return this.repo.findOne({ where: { id } });
     }
+
+
+    async findByIdempotencyKey(key: string) {
+        return this.repo.findOne({ where: { idempotencyKey: key } });
+    }
+
 }

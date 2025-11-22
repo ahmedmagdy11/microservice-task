@@ -8,6 +8,11 @@ export class Vm {
     @Column()
     userId: string;
 
+    @Column({
+        type: 'varchar',  nullable: true, unique: true })
+        idempotencyKey: string | null;
+
+
     @Column()
     hostname: string;
 
@@ -27,7 +32,7 @@ export class Vm {
     os: string;
 
     @Column({ default: 'creating' })
-    status: string; // creating | running | failed
+    status: string; 
 
     @Column({ nullable: true })
     externalId: string;
